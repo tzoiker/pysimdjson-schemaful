@@ -121,32 +121,32 @@ def test_nested_not_an_array():
 @pytest.mark.parametrize(
     "data,expected",
     [
-        # (
-        #     {
-        #         'l1_list': [
-        #             {'l2': {'s': '0', 'i': 0, 'f': 0.0, 'other': 'value'}},
-        #             {'l2': {'s': '1', 'i': 1, 'f': 1.0, 'another': 'value'}},
-        #         ],
-        #         'l1_dict': {
-        #             'l2': {'s': '2', 'i': 2, 'f': 2.0, 'other': 'value'},
-        #             'l1_other_list': [{'some': ' val'}],
-        #             'l1_other_dict': {'some': 'val'},
-        #             'l1_other_val': 'val',
-        #         },
-        #         'l1_other_list': [{'some': ' val'}],
-        #         'l1_other_dict': {'some': 'val'},
-        #         'l1_other_val': 'val',
-        #     },
-        #     {
-        #         'l1_list': [
-        #             {'l2': {'s': '0', 'i': 0, 'f': 0.0}},
-        #             {'l2': {'s': '1', 'i': 1, 'f': 1.0}},
-        #         ],
-        #         'l1_dict': {
-        #             'l2': {'s': '2', 'i': 2, 'f': 2.0},
-        #         },
-        #     }
-        # ),
+        (
+            {
+                "l1_list": [
+                    {"l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"}},
+                    {"l2": {"s": "1", "i": 1, "f": 1.0, "another": "value"}},
+                ],
+                "l1_dict": {
+                    "l2": {"s": "2", "i": 2, "f": 2.0, "other": "value"},
+                    "l1_other_list": [{"some": " val"}],
+                    "l1_other_dict": {"some": "val"},
+                    "l1_other_val": "val",
+                },
+                "l1_other_list": [{"some": " val"}],
+                "l1_other_dict": {"some": "val"},
+                "l1_other_val": "val",
+            },
+            {
+                "l1_list": [
+                    {"l2": {"s": "0", "i": 0, "f": 0.0}},
+                    {"l2": {"s": "1", "i": 1, "f": 1.0}},
+                ],
+                "l1_dict": {
+                    "l2": {"s": "2", "i": 2, "f": 2.0},
+                },
+            },
+        ),
         (
             {
                 "l1_list": [
@@ -170,7 +170,7 @@ def test_nested_not_an_array():
                     "l2": {},
                 },
             },
-        )
+        ),
     ],
 )
 def test_complex(parser, data, expected):

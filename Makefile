@@ -12,6 +12,7 @@ all:
 	@echo "make format             - Format code"
 	@echo "make test               - Run tests"
 	@echo "make test-tox           - Run tests with tox"
+	@echo "make test-docker-linux  - Run tests with linux docker image"
 	@echo "make build              - Build wheel"
 	@echo "make publish            - Publish wheel to PyPI"
 	@exit 0
