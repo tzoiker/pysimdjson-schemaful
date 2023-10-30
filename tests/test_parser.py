@@ -5,8 +5,6 @@ import pytest
 
 from simdjson_schemaful import loads
 
-# TODO: rewrite for json schemas, not pydantic-generated
-
 
 def test_any_of_fail():
     schema = {
