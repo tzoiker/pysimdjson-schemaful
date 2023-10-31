@@ -59,6 +59,7 @@ pydantic = "^1.0"
 pytest = "^7.4.2"
 pytest-cov = "^4.1"
 ruff = "^0.0.291"
+tox = "^4.0"
 
 [tool.poem-plugins.version]
 provider = "git"
@@ -78,6 +79,9 @@ pretty = true
 show_error_codes = true
 strict = true
 warn_return_any = false
+files = [
+    "simdjson_schemaful",
+]
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

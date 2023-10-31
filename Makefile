@@ -9,6 +9,7 @@ all:
 	@echo "make pre-commit         - Install pre-commit hooks"
 	@echo "make pre-commit-remove  - Remove pre-commit hooks"
 	@echo "make lint               - Run linters"
+	@echo "make lint-tox           - Run linters with tox"
 	@echo "make format             - Format code"
 	@echo "make test               - Run tests"
 	@echo "make test-tox           - Run tests with tox"
@@ -35,12 +36,17 @@ pre-commit-remove:
 	poetry run pre-commit uninstall
 
 mypy:
-	poetry run mypy $(PROJECT_PATH)
+	poetry run mypy
+
+mypy-tox:
+	poetry run tox -m mypy
 
 ruff:
 	poetry run ruff $(PROJECT_PATH) tests
 
 lint: mypy ruff
+
+lint-tox: mypy-tox ruff
 
 format:
 	poetry run ruff $(PROJECT_PATH) tests --fix-only
@@ -51,7 +57,7 @@ test:
 	poetry run pytest tests
 
 test-tox:
-	tox -r
+	poetry run tox -r
 
 test-docker-linux:
 	docker run --rm -v $(shell pwd):/mnt -w /mnt --name=$(PROJECT_NAME)_test $(PYTHON_IMAGE) tox
