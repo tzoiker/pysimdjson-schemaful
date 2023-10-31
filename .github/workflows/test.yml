@@ -1,4 +1,4 @@
-name: tests
+name: test
 
 # TODO: add coverage + coveralls?
 
@@ -8,6 +8,7 @@ on:
   pull_request:
     branches: [ main ]
 
+jobs:
   tests-on-linux:
     runs-on: ubuntu-latest
 
@@ -28,7 +29,8 @@ on:
           python-version: "${{ matrix.python }}"
       - name: Get tox env name
         run: |
-          TOXENV=${py${{ matrix.python }}//.}
+          TOXENV=py${{ matrix.python }}
+          TOXENV=${TOXENV//.}
           echo TOXENV=${TOXENV} >> $GITHUB_ENV
       - run: python -m pip install tox
       - run: tox -m ${{ env.TOXENV }}
