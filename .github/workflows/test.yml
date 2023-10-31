@@ -1,4 +1,4 @@
-name: tests
+name: test
 
 # TODO: add coverage + coveralls?
 
@@ -8,6 +8,7 @@ on:
   pull_request:
     branches: [ main ]
 
+jobs:
   tests-on-linux:
     runs-on: ubuntu-latest
 
