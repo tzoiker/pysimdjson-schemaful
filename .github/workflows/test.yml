@@ -1,0 +1,36 @@
+name: tests
+
+# TODO: add coverage + coveralls?
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  tests-on-linux:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        python:
+          - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python${{ matrix.python }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: "${{ matrix.python }}"
+      - name: Get tox env name
+        run: |
+          TOXENV=${py${{ matrix.python }}//.}
+          echo TOXENV=${TOXENV} >> $GITHUB_ENV
+      - run: python -m pip install tox
+      - run: tox -m ${{ env.TOXENV }}
+        env:
+          FORCE_COLOR: 1
