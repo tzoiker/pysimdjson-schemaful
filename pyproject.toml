@@ -66,6 +66,7 @@ provider = "git"
 update_pyproject = true
 
 [tool.poem-plugins.version.git]
+version_prefix = "v"
 format = "long"
 
 [tool.mypy]
