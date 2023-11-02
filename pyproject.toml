@@ -67,7 +67,7 @@ update_pyproject = true
 
 [tool.poem-plugins.version.git]
 version_prefix = "v"
-format = "long"
+format = "short"
 
 [tool.mypy]
 plugins = "pydantic.mypy"
