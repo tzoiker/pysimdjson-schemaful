@@ -35,4 +35,4 @@ jobs:
         uses: tschm/token-mint-action@v1.0.2
 
       - name: Publish to PyPI
-        run: poetry publish -u __token__ -p '${{ steps.mint.outputs.api-token }}'
+        run: poetry publish --build -u __token__ -p '${{ steps.mint.outputs.api-token }}'
