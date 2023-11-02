@@ -1,11 +1,9 @@
 name: publish
 
 on:
-  pull_request:
-    branches: [ main ]
-#  push:
-#    tags:
-#      - v*
+  push:
+    tags:
+      - v*
 
 jobs:
   publish:
@@ -35,9 +33,9 @@ jobs:
       - name: Build package
         run: poetry build
 
-#      - name: Mint token
-#        id: mint
-#        uses: tschm/token-mint-action@v1.0.2
+      - name: Mint token
+        id: mint
+        uses: tschm/token-mint-action@v1.0.2
 
-#      - name: Publish to PyPI
-#        run: poetry publish -u __token__ -p '${{ steps.mint.outputs.api-token }}'
+      - name: Publish to PyPI
+        run: poetry publish -u __token__ -p '${{ steps.mint.outputs.api-token }}'
