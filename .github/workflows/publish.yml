@@ -1,0 +1,38 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Fetch tags
+        run: git fetch --unshallow --tags || true
+
+      - name: Install poetry
+        run: python -m pip install poetry
+
+      - name: Install poem-plugins
+        run: poetry self add poem-plugins
+
+      - name: Install package
+        run: poetry install
+
+      - name: Mint token
+        id: mint
+        uses: tschm/token-mint-action@v1.0.2
+
+      - name: Publish to PyPi
+        run: poetry publish -u __token__ -p '${{ steps.mint.outputs.api-token }}'
