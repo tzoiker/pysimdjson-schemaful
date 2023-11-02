@@ -59,6 +59,9 @@ test:
 test-tox:
 	poetry run tox -r
 
+test-readme-tox:
+	poetry run tox -m readme
+
 test-docker-linux:
 	docker run --rm -v $(shell pwd):/mnt -w /mnt --name=$(PROJECT_NAME)_test $(PYTHON_IMAGE) tox
 
