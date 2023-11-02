@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Fetch tags
-        run: git fetch --unshallow --tags || true
+        run: git fetch --unshallow --tags --force || true
 
       - name: Install poetry
         run: python -m pip install poetry
@@ -30,9 +30,12 @@ jobs:
       - name: Install package
         run: poetry install
 
+      - name: Build package
+        run: poetry build
+
       - name: Mint token
         id: mint
         uses: tschm/token-mint-action@v1.0.2
 
       - name: Publish to PyPI
-        run: poetry publish --build -u __token__ -p '${{ steps.mint.outputs.api-token }}'
+        run: poetry publish -u __token__ -p '${{ steps.mint.outputs.api-token }}'
