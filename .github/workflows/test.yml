@@ -36,3 +36,18 @@ jobs:
       - run: tox -m ${{ env.TOXENV }}
         env:
           FORCE_COLOR: 1
+
+  test-readme:
+    runs-on: ubuntu-latest
+    strategy:
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+      - name: Get tox env name
+      - run: python -m pip install tox
+      - run: tox -m readme
+        env:
+          FORCE_COLOR: 1

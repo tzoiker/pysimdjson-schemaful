@@ -52,7 +52,7 @@ times faster than `orjson` and decreased memory consumption.
 This package aims to automate the manual labour of lazy loading with pysimdjson.
 
 Simply feed the JSON-schema in and the input data will be traversed
-and loaded with simdjson accordingly.
+and loaded with pysimdjson accordingly.
 
 Supports
 * `pydantic>=1,<3`
@@ -92,6 +92,7 @@ pip install "pysimdjson-schemaful[pydantic]"
 
 ### <a name="usage_basic"/> Basic
 
+<!--  name: test_basic -->
 ```python
 import json
 from simdjson_schemaful import loads
@@ -129,23 +130,24 @@ assert parsed == [
 With re-used simdjson parser **(recommended when used in a single thread,
 otherwise better consult pysimdjson project on thread-safety)**:
 
+<!--  name: test_basic -->
 ```python
 from simdjson import Parser
-from simdjson_schemaful import loads
 
 parser = Parser()
-schema = ...
-data = ...
-
 parsed = loads(data, schema=schema, parser=parser)
 
-...
+assert parsed == [
+    {"key": 0},
+    {},
+]
 ```
 
 ### <a name="usage_pydantic_v1"/> Pydantic v1
 
 With model (call `BaseModel.parse_raw_simdjson`):
 
+<!--  name: test_pydantic_v1_model -->
 ```python
 import json
 from simdjson_schemaful.pydantic.v1 import BaseModel
@@ -160,6 +162,7 @@ obj = Model.parse_raw_simdjson(data)
 
 With type (call `parse_raw_as_simdjson`):
 
+<!--  name: test_pydantic_v1_type -->
 ```python
 import json
 from typing import List
@@ -182,6 +185,7 @@ obj1, obj2 = parse_raw_simdjson_as(Type, data)
 
 With model (call `BaseModel.model_validate_simdjson`):
 
+<!--  name: test_pydantic_v2_model -->
 ```python
 import json
 from simdjson_schemaful.pydantic.v2 import BaseModel
@@ -196,6 +200,7 @@ obj = Model.model_validate_simdjson(data)
 
 With type adapter (call `TypeAdapter.validate_simdjson`)
 
+<!--  name: test_pydantic_v2_type_adapter -->
 ```python
 import json
 from typing import List
