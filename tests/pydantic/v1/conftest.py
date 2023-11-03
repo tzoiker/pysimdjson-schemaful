@@ -1,5 +1,5 @@
 from importlib.util import find_spec
-from typing import Optional, Sequence
+from typing import Dict, Optional, Sequence
 
 from pydantic import Extra
 
@@ -22,7 +22,7 @@ if not find_spec("pydantic.v1"):
                 f: float
 
             l2: Model2
-            l2_model_values: Optional[dict[str, Model2]]
+            l2_model_values: Optional[Dict[str, Model2]]
 
         l1_list: Sequence[Model1]
         l1_dict: Optional[Model1]
