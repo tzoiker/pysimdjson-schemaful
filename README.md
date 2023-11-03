@@ -59,9 +59,9 @@ Supports
 * `python>=3.8,<3.12`
 * `simdjson>=2,<6` (with caveats)
 
-Does not support complex schemas (yet), e.g.
+Does not support complex schemas (it may be not very reasonable from the
+practical standpoint anyway), e.g.,
 * `anyOf` (`Union[Model1, Model2]`)
-* `additionalProperties` (`dict[str, Model]`)
 * ...
 
 In such cases it will fully (not lazily) load the underlying objects.
@@ -125,6 +125,38 @@ assert parsed == [
 ]
 ```
 
+Example with `additionalProperties`:
+
+<!--  name: test_basic -->
+```python
+schema = {
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/definitions/Model",
+  },
+  "definitions": {
+    "Model": {
+      "type": "object",
+      "properties": {
+        "key": {"type": "integer"},
+      }
+    }
+  }
+}
+
+data = json.dumps({
+    "some": {"key": 0, "other": 1},
+    "other": {"missing": 2},
+})
+
+parsed = loads(data, schema=schema)
+
+assert parsed == {
+    "some": {"key": 0},
+    "other": {},
+}
+```
+
 ### <a name="usage_reusing_parser"/> Reusing parser
 
 With re-used simdjson parser **(recommended when used in a single thread,
@@ -137,10 +169,10 @@ from simdjson import Parser
 parser = Parser()
 parsed = loads(data, schema=schema, parser=parser)
 
-assert parsed == [
-    {"key": 0},
-    {},
-]
+assert parsed == {
+    "some": {"key": 0},
+    "other": {},
+}
 ```
 
 ### <a name="usage_pydantic_v1"/> Pydantic v1
