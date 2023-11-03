@@ -21,6 +21,7 @@ if find_spec("pydantic.v1"):
                 f: float
 
             l2: Model2
+            l2_model_values: Optional[dict[str, Model2]] = None
 
         l1_list: Sequence[Model1]
         l1_dict: Optional[Model1] = None

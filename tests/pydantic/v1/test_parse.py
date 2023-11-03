@@ -23,32 +23,16 @@ def test_union_fail():
         parse_raw_simdjson_as(model, data)
 
 
-def test_dict_model_value_fail():
+def test_dict_model_value_ok():
     model = Dict[str, Model]
     data = dumps({"key": {"some": 0, "value": 1}})
-    with pytest.raises(
-        ValidationError,
-        match=re.escape(
-            "1 validation error for ParsingModel[Dict[str, tests.pydantic.v1.conftest."
-            "Model]]\n__root__ -> key -> some\n  extra fields not permitted (type=va"
-            "lue_error.extra)"
-        ),
-    ):
-        parse_raw_simdjson_as(model, data)
+    assert parse_raw_simdjson_as(model, data)
 
 
-def test_nested_dict_model_value_fail():
+def test_nested_dict_model_value_ok():
     model = List[Dict[str, Model]]
     data = dumps([{"key": {"some": 0, "value": 1}}])
-    with pytest.raises(
-        ValidationError,
-        match=re.escape(
-            "1 validation error for ParsingModel[List[Dict[str, tests.pydantic.v1.conft"
-            "est.Model]]]\n__root__ -> 0 -> key -> some\n  extra fields not permitt"
-            "ed (type=value_error.extra)"
-        ),
-    ):
-        parse_raw_simdjson_as(model, data)
+    assert parse_raw_simdjson_as(model, data)
 
 
 def test_not_an_object():
@@ -97,7 +81,13 @@ def test_ok():
     data = [
         {
             "l1_list": [
-                {"l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"}},
+                {
+                    "l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"},
+                    "l2_model_values": {
+                        "some": {"s": "0", "i": 0, "f": 0.0, "other": "value"},
+                        "other": {"s": "1", "i": 1, "f": 1.0, "other": "value"},
+                    },
+                },
                 {"l2": {"s": "1", "i": 1, "f": 1.0, "another": "value"}},
             ],
         }
@@ -105,14 +95,19 @@ def test_ok():
     expected = [
         {
             "l1_list": [
-                {"l2": {"s": "0", "i": 0, "f": 0.0}},
+                {
+                    "l2": {"s": "0", "i": 0, "f": 0.0},
+                    "l2_model_values": {
+                        "some": {"s": "0", "i": 0, "f": 0.0},
+                        "other": {"s": "1", "i": 1, "f": 1.0},
+                    },
+                },
                 {"l2": {"s": "1", "i": 1, "f": 1.0}},
             ],
-            "l1_dict": None,
         }
     ]
     (parsed,) = parse_raw_simdjson_as(List[ModelNested], dumps(data))
-    assert [parsed.dict()] == expected
+    assert [parsed.dict(exclude_none=True)] == expected
 
 
 def test_raw_missing_required():

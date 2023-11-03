@@ -46,7 +46,13 @@ def test_nested_not_an_array():
 def test_ok():
     data = {
         "l1_list": [
-            {"l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"}},
+            {
+                "l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"},
+                "l2_model_values": {
+                    "some": {"s": "0", "i": 0, "f": 0.0, "other": "value"},
+                    "other": {"s": "1", "i": 1, "f": 1.0, "other": "value"},
+                },
+            },
             {"l2": {"s": "1", "i": 1, "f": 1.0, "another": "value"}},
         ],
         "l1_dict": {
@@ -61,7 +67,13 @@ def test_ok():
     }
     expected = {
         "l1_list": [
-            {"l2": {"s": "0", "i": 0, "f": 0.0}},
+            {
+                "l2": {"s": "0", "i": 0, "f": 0.0},
+                "l2_model_values": {
+                    "some": {"s": "0", "i": 0, "f": 0.0},
+                    "other": {"s": "1", "i": 1, "f": 1.0},
+                },
+            },
             {"l2": {"s": "1", "i": 1, "f": 1.0}},
         ],
         "l1_dict": {
@@ -69,7 +81,7 @@ def test_ok():
         },
     }
     parsed = ModelNested.model_validate_simdjson(dumps(data))
-    assert parsed.model_dump() == expected
+    assert parsed.model_dump(exclude_none=True) == expected
 
 
 def test_missing_required():
