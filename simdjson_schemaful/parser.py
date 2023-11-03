@@ -10,22 +10,12 @@ _List = List[Any]
 _FuncSet = Callable[..., None]
 
 
-_CACHE: Dict[str, Schema] = {}
-
-# TODO: handle additionalProperties, for example Dict[str, Model]
-# https://json-schema.org/understanding-json-schema/reference/object
-
-# TODO: handle anyOf
+# TODO: handle anyOf?
 
 
 def _get_definition(definitions: Dict[str, Schema], schema: Schema) -> Schema:
-    ref = schema.get("$ref")
-    if ref:
-        definition = _CACHE.get(ref)
-        if not definition:
-            definition = definitions[ref.split("/")[-1]]
-            _CACHE[ref] = definition
-        return definition
+    if ref := schema.get("$ref"):
+        return definitions[ref.split("/")[-1]]
     return schema
 
 
@@ -65,7 +55,9 @@ def _process_prop(
         return
 
     if (not type_ and not prop_data.get("$ref")) or (
-        type_ == "object" and not prop_data.get("properties")
+        type_ == "object"
+        and not prop_data.get("properties")
+        and not prop_data.get("additionalProperties")
     ):
         if not isinstance(value, simdjson.Object):
             raise ValueError(
@@ -127,26 +119,45 @@ def _loads(  # noqa: C901
                 )
 
             properties = schema.get("properties", {})
-            if not properties:
-                target.update(source.as_dict())  # type: ignore
+
+            if properties:
+                for prop_name, prop_data in properties.items():
+                    value = None
+                    try:
+                        value = source[prop_name]
+                    except KeyError:
+                        continue
+
+                    _process_prop(
+                        prop_data=prop_data,
+                        prop=prop_name,
+                        value=value,
+                        target=target,
+                        func_set=_set_dict,
+                        definitions=definitions,
+                        queue=queue,
+                    )
                 continue
 
-            for prop_name, prop_data in properties.items():
-                value = None
-                try:
-                    value = source[prop_name]
-                except KeyError:
-                    continue
+            additional_properties = _get_definition(
+                definitions=definitions,
+                schema=schema.get("additionalProperties", {}),
+            )
+            if additional_properties:
+                for prop_name in source.keys():
+                    value = source.get(prop_name)
+                    _process_prop(
+                        prop_data=additional_properties,
+                        prop=prop_name,
+                        value=value,
+                        target=target,
+                        func_set=_set_dict,
+                        definitions=definitions,
+                        queue=queue,
+                    )
+                continue
 
-                _process_prop(
-                    prop_data=prop_data,
-                    prop=prop_name,
-                    value=value,
-                    target=target,
-                    func_set=_set_dict,
-                    definitions=definitions,
-                    queue=queue,
-                )
+            target.update(source.as_dict())  # type: ignore
 
         elif type_ == "array":
             if not isinstance(source, simdjson.Array):

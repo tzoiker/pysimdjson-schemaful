@@ -39,7 +39,7 @@ def test_nested_any_of_fail():
     assert loaded == [{"some": 0, "value": 1}]
 
 
-def test_dict_value_additional_properties_fail():
+def test_dict_value_additional_properties_ok():
     schema = {
         "type": "object",
         "additionalProperties": {"$ref": "#/definitions/Model"},
@@ -53,10 +53,10 @@ def test_dict_value_additional_properties_fail():
     }
     data = dumps({"key": {"some": 0, "value": 1}})
     loaded = loads(data, schema=schema)
-    assert loaded == {"key": {"some": 0, "value": 1}}
+    assert loaded == {"key": {"value": 1}}
 
 
-def test_nested_dict_value_additional_properties_fail():
+def test_nested_dict_value_additional_properties_ok():
     schema = {
         "type": "array",
         "items": {
@@ -73,7 +73,27 @@ def test_nested_dict_value_additional_properties_fail():
     }
     data = dumps([{"key": {"some": 0, "value": 1}}])
     loaded = loads(data, schema=schema)
-    assert loaded == [{"key": {"some": 0, "value": 1}}]
+    assert loaded == [{"key": {"value": 1}}]
+
+
+@pytest.mark.parametrize(
+    "keyword",
+    ("definitions", "$defs"),
+)
+def test_definitions(keyword):
+    schema = {
+        "type": "array",
+        "items": {"$ref": f"#/{keyword}/Model"},
+        "definitions": {
+            "Model": {
+                "type": "object",
+                "properties": {"value": {"type": "integer"}},
+            }
+        },
+    }
+    data = dumps([{"some": 0, "value": 1}])
+    loaded = loads(data, schema=schema)
+    assert loaded == [{"value": 1}]
 
 
 def test_not_an_object():
@@ -122,7 +142,13 @@ def test_nested_not_an_array():
         (
             {
                 "l1_list": [
-                    {"l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"}},
+                    {
+                        "l2": {"s": "0", "i": 0, "f": 0.0, "other": "value"},
+                        "l2_model_values": {
+                            "some": {"s": "0", "i": 0, "f": 0.0, "other": "value"},
+                            "other": {"s": "1", "i": 1, "f": 1.0, "other": "value"},
+                        },
+                    },
                     {"l2": {"s": "1", "i": 1, "f": 1.0, "another": "value"}},
                 ],
                 "l1_dict": {
@@ -137,7 +163,13 @@ def test_nested_not_an_array():
             },
             {
                 "l1_list": [
-                    {"l2": {"s": "0", "i": 0, "f": 0.0}},
+                    {
+                        "l2": {"s": "0", "i": 0, "f": 0.0},
+                        "l2_model_values": {
+                            "some": {"s": "0", "i": 0, "f": 0.0},
+                            "other": {"s": "1", "i": 1, "f": 1.0},
+                        },
+                    },
                     {"l2": {"s": "1", "i": 1, "f": 1.0}},
                 ],
                 "l1_dict": {
@@ -186,7 +218,13 @@ def test_complex(parser, data, expected):
             },
             "Model1": {
                 "type": "object",
-                "properties": {"l2": {"$ref": "#/definitions/Model2"}},
+                "properties": {
+                    "l2": {"$ref": "#/definitions/Model2"},
+                    "l2_model_values": {
+                        "type": "object",
+                        "additionalProperties": {"$ref": "#/definitions/Model2"},
+                    },
+                },
                 "required": ["l2"],
             },
             "ModelNested": {
