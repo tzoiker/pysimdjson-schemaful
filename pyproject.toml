@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pysimdjson-schemaful"
-version = "0.0.0"
+version = "0.2.0"
 description = "Schema-aware pysimdjson loader for efficient parsing of large excessive inputs."
 authors = ["Tzoiker <tzoiker@gmail.com>"]
 repository = "https://github.com/tzoiker/pysimdjson-schemaful"
@@ -31,6 +31,16 @@ packages = [
   {include = "simdjson_schemaful"}
 ]
 
+[tool.commitizen]
+version_provider = "poetry"
+version_scheme = "pep440"
+tag_format = "v$version"
+changelog_incremental = true
+version_files = [
+    "simdjson_schemaful/__version__.py",
+]
+
+
 [[tool.poetry.source]]
 name = "pypi"
 priority = "primary"
@@ -51,6 +61,7 @@ pydantic = ["pydantic"]
 [tool.poetry.group.dev.dependencies]
 attrs = "^23.1.0"
 black = "^23.10.0"
+commitizen = "^3.12.0"
 markdown-pytest = "^0.3.0"
 mypy = "^1.0"
 orjson = "^3.9.9"
@@ -60,14 +71,6 @@ pytest = "^7.4.2"
 pytest-cov = "^4.1"
 ruff = "^0.0.291"
 tox = "^4.0"
-
-[tool.poem-plugins.version]
-provider = "git"
-update_pyproject = true
-
-[tool.poem-plugins.version.git]
-version_prefix = "v"
-format = "short"
 
 [tool.mypy]
 plugins = "pydantic.mypy"
