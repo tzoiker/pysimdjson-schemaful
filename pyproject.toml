@@ -36,7 +36,6 @@ version_provider = "poetry"
 version_scheme = "pep440"
 tag_format = "v$version"
 changelog_incremental = true
-files_only = true
 version_files = [
     "simdjson_schemaful/__version__.py",
 ]
