@@ -16,6 +16,7 @@ all:
 	@echo "make test-docker-linux  - Run tests with linux docker image"
 	@echo "make build              - Build wheel"
 	@echo "make publish            - Publish wheel to PyPI"
+	@echo "make release            - Update version and changelog"
 	@exit 0
 
 clean:
@@ -64,6 +65,13 @@ test-readme-tox:
 
 test-docker-linux:
 	docker run --rm -v $(shell pwd):/mnt -w /mnt --name=$(PROJECT_NAME)_test $(PYTHON_IMAGE) tox
+
+release:
+	@if [[ -z "$(version)" ]]; then \
+		echo "Must run the command with the version parameter: make release version=<version>"; \
+	else \
+		poetry run cz bump --changelog --files-only $(version); \
+	fi
 
 build:
 	poetry build

@@ -31,6 +31,17 @@ packages = [
   {include = "simdjson_schemaful"}
 ]
 
+[tool.commitizen]
+version_provider = "poetry"
+version_scheme = "pep440"
+tag_format = "v$version"
+changelog_incremental = true
+files_only = true
+version_files = [
+    "simdjson_schemaful/__version__.py",
+]
+
+
 [[tool.poetry.source]]
 name = "pypi"
 priority = "primary"
@@ -60,14 +71,6 @@ pytest = "^7.4.2"
 pytest-cov = "^4.1"
 ruff = "^0.0.291"
 tox = "^4.0"
-
-[tool.poem-plugins.version]
-provider = "git"
-update_pyproject = true
-
-[tool.poem-plugins.version.git]
-version_prefix = "v"
-format = "short"
 
 [tool.mypy]
 plugins = "pydantic.mypy"
