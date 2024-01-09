@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type, TypeVar, Union
 
 import pydantic
 from pydantic import schema_of
@@ -9,6 +9,9 @@ from simdjson import Parser
 
 from simdjson_schemaful import loads
 from simdjson_schemaful.parser import Schema
+
+if TYPE_CHECKING:
+    Model = TypeVar("Model", bound="BaseModel")
 
 
 class ModelMetaclass(pydantic.main.ModelMetaclass):
@@ -25,10 +28,10 @@ _REGISTRY: Dict[ModelMetaclass, Schema] = {}
 class BaseModel(pydantic.BaseModel, metaclass=ModelMetaclass):
     @classmethod
     def parse_raw_simdjson(
-        cls,
+        cls: Type["Model"],
         b: Union[str, bytes],
         parser: Optional[Parser] = None,
-    ) -> "BaseModel":
+    ) -> "Model":
         try:
             obj = loads(b, schema=_REGISTRY[cls], parser=parser)
         except (ValueError, TypeError, UnicodeDecodeError) as e:

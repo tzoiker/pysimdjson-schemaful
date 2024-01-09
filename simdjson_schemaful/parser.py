@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import simdjson
 from simdjson import Parser
 
-JsonType = Union[dict, list, str, int, float, bool]
+JsonType = Union[Dict[Any, Any], List[Any], str, int, float, bool]
 Schema = Dict[Any, Any]
 _Dict = Dict[Any, Any]
 _List = List[Any]
