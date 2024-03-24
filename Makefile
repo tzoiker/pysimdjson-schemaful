@@ -1,4 +1,4 @@
-PROJECT_NAME ?= simdjson_schemaful
+PROJECT_NAME := simdjson_schemaful
 PROJECT_PATH := $(PROJECT_NAME)
 PYTHON_IMAGE := docker.io/snakepacker/python:all
 
