@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Generic, Optional, Type, TypeVar, Union
 
 import pydantic
 from pydantic import ValidationError
@@ -38,10 +38,16 @@ class BaseModel(pydantic.BaseModel, metaclass=ModelMetaclass):
         return cls.model_validate(obj)
 
 
-class TypeAdapter(pydantic.TypeAdapter[T]):
+class TypeAdapter(Generic[T]):
+    __slots__ = ("_ta", "_simdjson_schema")
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self._simdjson_schema = self.json_schema()
+        self._ta = pydantic.TypeAdapter[T](*args, **kwargs)
+        self._simdjson_schema = self._ta.json_schema()
+
+    @property
+    def pydantic_type_adapter(self) -> pydantic.TypeAdapter[T]:
+        return self._ta
 
     def _build_error(self, exc: Exception, data: Union[str, bytes]) -> ValidationError:
         if isinstance(exc, UnicodeDecodeError):
@@ -58,7 +64,10 @@ class TypeAdapter(pydantic.TypeAdapter[T]):
             "loc": ("__root__",),
             "input": data,
         }
-        return ValidationError.from_exception_data(self.core_schema["type"], [details])
+        return ValidationError.from_exception_data(
+            self._ta.core_schema["type"],
+            [details],
+        )
 
     def validate_simdjson(
         self,
@@ -72,4 +81,4 @@ class TypeAdapter(pydantic.TypeAdapter[T]):
             obj = loads(data, schema=self._simdjson_schema, parser=parser)
         except (ValueError, TypeError, UnicodeDecodeError) as e:
             raise self._build_error(e, data)
-        return self.validate_python(obj, strict=strict, context=context)
+        return self._ta.validate_python(obj, strict=strict, context=context)
