@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, Generic, Optional, TYPE_CHECKING, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Generic, Optional, Type, TypeVar, Union
 
 import pydantic
 from pydantic import ValidationError
@@ -64,7 +64,10 @@ class TypeAdapter(Generic[T]):
             "loc": ("__root__",),
             "input": data,
         }
-        return ValidationError.from_exception_data(self._ta.core_schema["type"], [details])
+        return ValidationError.from_exception_data(
+            self._ta.core_schema["type"],
+            [details],
+        )
 
     def validate_simdjson(
         self,
